@@ -20,7 +20,8 @@ Description:
 	
 Dependencies:
 	- gtfs data must have been imported into database
-	- hutt_pax.tmp_gtfs_stops_400m_buffer (i.e network catchments need to have already been generated for "my_gtfs_generate_table_my_gtfs_route_catchment()" function to work )
+	- my_gtfs_generate_table_my_gtfs_route_catchment() requires stop catchments to have already been generated
+	using my_gtfs_generate_table_my_gtfs_route_catchment() function.  
 
 	
 Usage:
@@ -313,7 +314,7 @@ BEGIN
 			a.stop_name
 		FROM my_gtfs_route_trip_stop_sequence AS a
 			JOIN gtfs_trips AS b ON a.trip_id = b.trip_id
-		ORDER BY route_name, weekday, direction_id, shape_id, stop_sequence
+		ORDER BY route_name, weekday, direction_id, shape_id, stop_sequence;
 			
 	RETURN 'OK';
 	
@@ -326,8 +327,10 @@ $BODY$
 	Run functions that generate required tables
 */
 SELECT my_gtfs_generate_table_my_gtfs_trip_stats();
-SELECT my_gtfs_generate_table_my_gtfs_route_catchment();
 SELECT my_gtfs_generate_table_my_gtfs_route_trip_stop_sequence();
+
+-- The following will only work if dependency table exists
+--SELECT my_gtfs_generate_table_my_gtfs_route_catchment('SELECT id, source_id AS stop_id, the_geom FROM hutt_pax.tmp_gtfs_stops_400m_buffer');
 
 
 	
