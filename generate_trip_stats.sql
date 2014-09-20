@@ -76,6 +76,10 @@ BEGIN
 			(SELECT departure_time FROM gtfs_stop_times AS b WHERE a.trip_id=b.trip_id ORDER BY stop_sequence DESC LIMIT 1) AS arrive_time,
 			(SELECT stop_id FROM gtfs_stop_times AS b WHERE a.trip_id=b.trip_id ORDER BY stop_sequence LIMIT 1) AS first_stop_id,
 			(SELECT stop_id FROM gtfs_stop_times AS b WHERE a.trip_id=b.trip_id ORDER BY stop_sequence DESC LIMIT 1) AS last_stop_id,
+			-- Need to select approach to getting distance travelled, note may need to change /1000 or /100 depending on units
+			-- Distance based on gtfs_shapes table (noting optional here)
+			--(SELECT shape_dist_traveled FROM gtfs_shapes AS b WHERE a.shape_id=b.shape_id ORDER BY shape_pt_sequence DESC LIMIT 1)/1000::float AS trip_distance_km
+			-- Or distance based on gtfs_stop_times table (noting optional here too)
 			(SELECT shape_dist_traveled FROM gtfs_stop_times AS b WHERE a.trip_id=b.trip_id ORDER BY stop_sequence DESC LIMIT 1)/100::float AS trip_distance_km
 		FROM gtfs_trips AS a;
 	
